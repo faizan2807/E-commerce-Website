@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+    <script>
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        // Function to get a cookie
+        function getCookie(name) {
+            var cookies = document.cookie.split("; ");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookiePair = cookies[i].split("=");
+                if (cookiePair[0] === name) {
+                    return cookiePair[1];
+                }
+            }
+            return "";
+        }
+
+        function VerifyUser() {
+            var userName = document.getElementById("Username").value;
+            var userError = document.getElementById("UserError");
+            var userRegex = /^[A-Z][a-zA-Z0-9]{3,14}$/;
+
+            if (userRegex.test(userName)) {
+                userError.innerHTML = "";
+                return true;
+            } else {
+                userError.innerHTML = "<span style='color: red;'>Invalid username: Must start with an uppercase letter and be 4-15 characters long.</span>";
+                return false;
+            }
+        }
+
+        function VerifyPassword() {
+            var password = document.getElementById("Pwd").value;
+            var pwdError = document.getElementById("pwdError");
+            var pwdRegex = /^(?=.*[A-Z])(?=.*\d).{4,15}$/;
+
+            if (pwdRegex.test(password)) {
+                pwdError.innerHTML = "";
+                return true;
+            } else {
+                pwdError.innerHTML = "<span style='color: red;'>Invalid password: Must contain an uppercase letter, a digit, and be 4-15 characters long.</span>";
+                return false;
+            }
+        }
+
+        function LoginClick(event) {
+            event.preventDefault(); // Prevents form submission
+
+            var isUserValid = VerifyUser();
+            var isPasswordValid = VerifyPassword();
+
+            if (isUserValid && isPasswordValid) {
+                setCookie("username", document.getElementById("Username").value, 1);
+                setCookie("password", document.getElementById("Pwd").value, 1);
+                alert("Login successful!");
+            } else {
+                alert("Login failed! Please enter valid credentials.");
+            }
+
+            return false; // Prevents the form from reloading
+        }
+
+        // Pre-fill form fields from cookies when the page loads
+        window.onload = function () {
+            document.getElementById("Username").value = getCookie("username");
+            document.getElementById("Pwd").value = getCookie("password");
+        };
+    </script>
+</head>
+
+<body class="container-fluid d-flex justify-content-center">
+    <form class="border border-2 border-dark rounded mt-5 w-25 p-4" onsubmit="return LoginClick(event)">
+        <h2 class="bi bi-person"> Login</h2>
+        <dt>Username</dt>
+        <dd><input type="text" class="form-control" id="Username"></dd>
+        <dd id="UserError"></dd>
+        <dt>Password</dt>
+        <dd><input type="password" class="form-control" id="Pwd"></dd>
+        <dd id="pwdError"></dd>
+        <button class="btn btn-warning w-100" type="submit">Login</button>
+    </form>
+</body>
+
+</html>
